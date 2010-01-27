@@ -1,4 +1,5 @@
-package be.spitech.exposit;
+package be.spitech.expocalc;
+
 
 public interface Factor<T> {
 	
@@ -8,4 +9,6 @@ public interface Factor<T> {
 	}
 	
 	public T getValue();
+	public T getNextValue();
+	public T getPreviousValue();
 }

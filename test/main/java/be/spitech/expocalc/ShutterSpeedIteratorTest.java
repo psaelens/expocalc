@@ -1,12 +1,14 @@
 /**
  * 
  */
-package be.spitech.exposit;
+package be.spitech.expocalc;
 
 import static org.junit.Assert.*;
 
 import org.apache.commons.lang.math.Fraction;
 import org.junit.Test;
+
+import be.spitech.expocalc.ShutterSpeedIterator;
 
 /**
  * @author pis
@@ -15,7 +17,7 @@ import org.junit.Test;
 public class ShutterSpeedIteratorTest {
 
 	/**
-	 * Test method for {@link be.spitech.exposit.ShutterSpeedIterator#ShutterSpeedIterator(org.apache.commons.lang.math.Fraction, org.apache.commons.lang.math.Fraction)}.
+	 * Test method for {@link be.spitech.expocalc.ShutterSpeedIterator#ShutterSpeedIterator(org.apache.commons.lang.math.Fraction, org.apache.commons.lang.math.Fraction)}.
 	 */
 	@Test
 	public void testShutterSpeedIterator() {

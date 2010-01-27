@@ -1,19 +1,23 @@
 /**
  * 
  */
-package be.spitech.exposit.swing;
+package be.spitech.expocalc.swing;
 
 import javax.swing.AbstractSpinnerModel;
+import javax.swing.SpinnerModel;
 
 import org.apache.commons.lang.math.Fraction;
 
-import be.spitech.exposit.ShutterSpeeds;
+import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
+import com.jgoodies.binding.beans.PropertyAdapter;
+
+import be.spitech.expocalc.ShutterSpeeds;
 
 /**
  * @author pis
  *
  */
-public class SpinnerShutterSpeedsModel extends AbstractSpinnerModel {
+public class SpinnerShutterSpeedsModel extends AbstractSpinnerModel implements SpinnerModel {
 
 	private final ShutterSpeeds shutterSpeeds;
 	
@@ -76,10 +80,10 @@ public class SpinnerShutterSpeedsModel extends AbstractSpinnerModel {
 		if ((value == null) || !(value instanceof Fraction)) {
 			throw new IllegalArgumentException("illegal value");
 		}
-		if (!value.equals(this.shutterSpeeds.getValue())) {
+//		if (!value.equals(this.shutterSpeeds.getValue())) {
 			this.shutterSpeeds.setValue((Fraction) value);
 			fireStateChanged();
-		}
+//		}
 	}
 
 }

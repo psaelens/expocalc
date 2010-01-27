@@ -1,15 +1,17 @@
-package be.spitech.exposit;
+package be.spitech.expocalc;
 
 import static org.junit.Assert.*;
 
 import org.apache.commons.lang.math.Fraction;
 import org.junit.Test;
 
+import be.spitech.expocalc.ShutterSpeeds;
+
 
 public class ShutterSpeedsTest {
 
 	/**
-	 * Test method for {@link be.spitech.exposit.ShutterSpeeds#getNextValue()}.
+	 * Test method for {@link be.spitech.expocalc.ShutterSpeeds#getNextValue()}.
 	 */
 	@Test
 	public void testGetNextValue() {
@@ -19,7 +21,7 @@ public class ShutterSpeedsTest {
 	}
 	
 	/**
-	 * Test method for {@link be.spitech.exposit.ShutterSpeeds#getPreviousValue()}.
+	 * Test method for {@link be.spitech.expocalc.ShutterSpeeds#getPreviousValue()}.
 	 */
 	@Test
 	public void testGetPreviousValue() {
@@ -31,15 +33,15 @@ public class ShutterSpeedsTest {
 			int expectedSpeeds) {
 		int speeds = 0;
 		
-		assertEquals(expectedSpeeds, shutterSpeeds.getNumberOfSpeed());
+		assertEquals(expectedSpeeds, shutterSpeeds.size());
 		assertEquals(shutterSpeeds.getRange()[0], shutterSpeeds.getValue());
 		assertNull(shutterSpeeds.getPreviousValue());
 		
 		while(shutterSpeeds.getNextValue() != null) {
 			speeds++;
-			System.out.println(speeds + ". " +shutterSpeeds.getValue());
-			if (speeds > shutterSpeeds.getNumberOfSpeed())
-				fail("speeds [" + speeds + "] exceed expected speeds [" + shutterSpeeds.getNumberOfSpeed() + "]");
+//			System.out.println(speeds + ". " +shutterSpeeds.getValue());
+			if (speeds > shutterSpeeds.size())
+				fail("speeds [" + speeds + "] exceed expected speeds [" + shutterSpeeds.size() + "]");
 			try {
 				shutterSpeeds.setValue(shutterSpeeds.getNextValue());
 			} catch (IllegalArgumentException e) {
@@ -53,14 +55,14 @@ public class ShutterSpeedsTest {
 			int expectedSpeeds) {
 		int speeds = 0;
 		
-		assertEquals(expectedSpeeds, shutterSpeeds.getNumberOfSpeed());
+		assertEquals(expectedSpeeds, shutterSpeeds.size());
 		assertEquals(shutterSpeeds.getRange()[1], shutterSpeeds.getValue());
 		assertNull(shutterSpeeds.getNextValue());
 		
 		while(shutterSpeeds.getPreviousValue() != null) {
 			speeds++;
-			if (speeds > shutterSpeeds.getNumberOfSpeed())
-				fail("speeds [" + speeds + "] exceed expected speeds [" + shutterSpeeds.getNumberOfSpeed() + "]");
+			if (speeds > shutterSpeeds.size())
+				fail("speeds [" + speeds + "] exceed expected speeds [" + shutterSpeeds.size() + "]");
 			shutterSpeeds.setValue(shutterSpeeds.getPreviousValue());
 		}
 		assertEquals(shutterSpeeds.getRange()[0], shutterSpeeds.getValue());

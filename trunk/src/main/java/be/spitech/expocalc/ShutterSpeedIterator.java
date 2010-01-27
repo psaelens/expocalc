@@ -1,4 +1,4 @@
-package be.spitech.exposit;
+package be.spitech.expocalc;
 
 import java.util.Iterator;
 

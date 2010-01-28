@@ -4,6 +4,7 @@ import static be.spitech.util.CollectionUtils.toLinkedList;
 import static be.spitech.util.FractionUtils.f;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -11,6 +12,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.math.Fraction;
 
 import com.jgoodies.binding.beans.Model;
+
 
 /**
  * <p>Shutter Speed : The duration of time for which the shutter 
@@ -20,7 +22,7 @@ import com.jgoodies.binding.beans.Model;
  *  
  * @author pis
  */
-public class ShutterSpeeds extends Model /*implements Factor<Fraction>*/ {
+public class ShutterSpeeds extends Model implements Factor<Fraction>, Iterable<Fraction> {
 	
 	/**
 	 * The agreed standards for shutter speeds are:
@@ -47,19 +49,19 @@ public class ShutterSpeeds extends Model /*implements Factor<Fraction>*/ {
 	 */
 	public final static ShutterSpeeds EXTENDED_STANDARD;
 	
-	private final static LinkedList<Fraction> ONE;
-	private final static LinkedList<Fraction> THIRD;
+	private final static LinkedList<Fraction> FULL;
+	private final static LinkedList<Fraction> ONE_THIRD;
 	
 	static {
 		// define ONE, HALF and THIRD Sorted Sets
-		ONE = toLinkedList(new Fraction[] {
+		FULL = toLinkedList(new Fraction[] {
 				f(1,8000), f(1,4000), f(1,2000), f(1,1000),
 				f(1,500), f(1,250), f(1,125),
 				f(1,60), f(1,30), f(1,15), f(1,8),
 				f(1,4), f(1,2), f(1), f(2),
 				f(4), f(8), f(15), f(30)
 		});
-		THIRD = toLinkedList(new Fraction[] {
+		ONE_THIRD = toLinkedList(new Fraction[] {
 				f(1,6400), f(1,5000), f(1,3200), f(1,2500),
 				f(1,1600), f(1,1250), f(1,800), f(1,640),
 				f(1,400), f(1,320), f(1,200), f(1,160),
@@ -76,9 +78,6 @@ public class ShutterSpeeds extends Model /*implements Factor<Fraction>*/ {
 		EXTENDED_STANDARD = new ShutterSpeeds(Fraction.getFraction(1, 8000), Fraction.getFraction(15, 1));
 	}
 	
-	private final TreeSet<Fraction> speeds;
-	private Fraction value;
-	
 	public ShutterSpeeds(Fraction minimum, Fraction maximum) {
 		this(minimum, minimum, maximum);
 	}
@@ -86,26 +85,48 @@ public class ShutterSpeeds extends Model /*implements Factor<Fraction>*/ {
 
 
 	public ShutterSpeeds(Fraction value, Fraction minimum, Fraction maximum) {
-		this.speeds = new TreeSet<Fraction>(ONE.subList(ONE.indexOf(minimum), ONE.indexOf(maximum) + 1));
-		setValue(value);
+		if (value == null) {
+		    throw new IllegalArgumentException("value must be non-null");
+		}
+		if (!(((minimum == null) || (minimum.compareTo(value) <= 0)) && 
+		      ((maximum == null) || (maximum.compareTo(value) >= 0)))) {
+		    throw new IllegalArgumentException("(minimum <= value <= maximum) is false");
+		}
+		this.scale = new TreeSet<Fraction>(
+				FULL.subList(
+						FULL.indexOf(minimum), 
+						FULL.indexOf(maximum) + 1));
+		this.value = value;
 	}
 	
+	protected final TreeSet<Fraction> scale;
+	private Fraction value;
+
+
 	public int size() {
-		return this.speeds.size();
+		return this.scale.size();
+	}
+
+	public Fraction getMinimum() {
+		return scale.first();
+	}
+	
+	public Fraction getMaximum() {
+		return scale.last();
 	}
 	
 	public Fraction[] getRange() {
 		return new Fraction[] { 
-				speeds.first(),
-				speeds.last() };
+				scale.first(),
+				scale.last() };
 	}
-	
+
 	public Fraction getNextValue() {
-		return speeds.higher(value);
+		return scale.higher(value);
 	}
 
 	public Fraction getPreviousValue() {
-		return speeds.lower(value);
+		return scale.lower(value);
 	}
 
 	/**
@@ -114,21 +135,31 @@ public class ShutterSpeeds extends Model /*implements Factor<Fraction>*/ {
 	public Fraction getValue() {
 		return value;
 	}
-	
-	public List<Fraction> getSpeeds() {
-		return Collections.unmodifiableList(new LinkedList<Fraction>(speeds));
-	}
 
 	/**
 	 * @param value the value to set
 	 */
 	public void setValue(Fraction value) {
-		if (!speeds.contains(value)) {
-			throw new IllegalArgumentException("invalid value [" + value + "] - should be in " + speeds);
+		if (!scale.contains(value)) {
+			throw new IllegalArgumentException("invalid value [" + value + "] - should be in " + scale);
 		}
 		Fraction oldValue = getValue();
 		this.value = value;
 		firePropertyChange("value", oldValue, this.value);
+		if (oldValue.compareTo(value)<=0) {
+			firePropertyChange("step", 0, scale.subSet(oldValue, value).size());
+		} else {
+			firePropertyChange("step", 0, -scale.subSet(value, oldValue).size());
+		}
+	}
+
+	@Override
+	public Iterator<Fraction> iterator() {
+		return scale.iterator();
+	}
+	
+	public List<Fraction> getScale() {
+		return Collections.unmodifiableList(new LinkedList<Fraction>(scale));
 	}
 
 }

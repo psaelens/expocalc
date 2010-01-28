@@ -1,15 +1,56 @@
 package be.spitech.expocalc;
 
-import static org.junit.Assert.*;
+import static be.spitech.util.FractionUtils.f;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Iterator;
 
 import org.apache.commons.lang.math.Fraction;
 import org.junit.Test;
 
-import be.spitech.expocalc.ShutterSpeeds;
-
 
 public class ShutterSpeedsTest {
 
+	/**
+	 * Test method for {@link be.spitech.expocalc.ShutterSpeeds#iterator()}.
+	 */
+	@Test
+	public void testShutterSpeedIterator() {
+		Fraction first = Fraction.getFraction(1, 8000);
+		Fraction last = Fraction.getFraction(15, 1);
+		Iterator<Fraction> iterator = new ShutterSpeeds(first, last).iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals(first, iterator.next());
+		assertEquals(f(1, 4000), iterator.next());
+		assertEquals(f(1, 2000), iterator.next());
+		assertEquals(f(1, 1000), iterator.next());
+		assertEquals(f(1, 500), iterator.next());
+		assertEquals(f(1, 250), iterator.next());
+		assertEquals(f(1, 125), iterator.next());
+		assertEquals(f(1, 60), iterator.next());
+		assertEquals(f(1, 30), iterator.next());
+		assertEquals(f(1, 15), iterator.next());
+		assertEquals(f(1, 8), iterator.next());
+		assertEquals(Fraction.ONE_QUARTER, iterator.next());
+		assertEquals(Fraction.ONE_HALF, iterator.next());
+		assertEquals(Fraction.ONE, iterator.next());
+		assertEquals(f(2), iterator.next());
+		assertEquals(f(4), iterator.next());
+		assertEquals(f(8), iterator.next());
+		assertEquals(last, iterator.next());
+	}
+	
+	Fraction numerator(int i) {
+		return Fraction.getFraction(i, 1);
+	}
+	
+	Fraction denomainator(int i) {
+		return Fraction.getFraction(1, i);
+	}
+	
 	/**
 	 * Test method for {@link be.spitech.expocalc.ShutterSpeeds#getNextValue()}.
 	 */
